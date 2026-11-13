@@ -1,0 +1,30 @@
+name: Test dev container features
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: devcontainers/action@v1
+        with:
+          validate-only: "true"
+          base-path-to-features: "./src"
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        baseImage:
+          - mcr.microsoft.com/devcontainers/base:debian
+          - mcr.microsoft.com/devcontainers/base:noble
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm install -g @devcontainers/cli
+      - run: devcontainer features test --skip-scenarios -f personal-setup -i ${{ matrix.baseImage }} .

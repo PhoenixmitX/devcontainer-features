@@ -1,0 +1,62 @@
+{
+	"id": "personal-setup",
+	"version": "1.0.0",
+	"name": "Personal setup",
+	"description": "Shell aliases, a shared ~/.claude volume, Claude Code with auto-update and a Remote Control session in GNU screen, plus a standard set of VS Code extensions. Debian/Ubuntu images only.",
+	"documentationURL": "https://github.com/PhoenixmitX/devcontainer-features/tree/main/src/personal-setup",
+	"options": {
+		"remoteControl": {
+			"type": "boolean",
+			"default": true,
+			"description": "Start `claude remote-control` in a detached screen session named 'claude' on every container start."
+		},
+		"autoUpdate": {
+			"type": "boolean",
+			"default": true,
+			"description": "Run `claude update` on every container start."
+		},
+		"permissionMode": {
+			"type": "string",
+			"enum": ["", "default", "acceptEdits", "auto", "plan", "dontAsk", "bypassPermissions"],
+			"default": "",
+			"description": "Permission mode for sessions spawned through Remote Control (empty = Claude Code's default)."
+		}
+	},
+	"containerEnv": {
+		"CLAUDE_CONFIG_DIR": "/home/vscode/.claude"
+	},
+	"mounts": [
+		{
+			"source": "claude-code-config",
+			"target": "/home/vscode/.claude",
+			"type": "volume"
+		}
+	],
+	"postStartCommand": "/usr/local/share/personal-setup/post-start.sh",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"rogalmic.bash-debug",
+				"mads-hartmann.bash-ide-vscode",
+				"edwinhuish.better-comments-next",
+				"wmaurer.change-case",
+				"anthropic.claude-code",
+				"ms-azuretools.vscode-containers",
+				"docker.docker",
+				"EditorConfig.EditorConfig",
+				"Lebster.eval-and-replace",
+				"waderyan.gitblame",
+				"mhutchie.git-graph",
+				"donjayamanne.githistory",
+				"github.vscode-github-actions",
+				"Cardinal90.multi-cursor-case-preserve"
+			]
+		}
+	},
+	"installsAfter": [
+		"ghcr.io/devcontainers/features/common-utils",
+		"ghcr.io/devcontainers/features/docker-in-docker",
+		"ghcr.io/devcontainers/features/docker-outside-of-docker",
+		"ghcr.io/devcontainers-extra/features/apt-get-packages"
+	]
+}
