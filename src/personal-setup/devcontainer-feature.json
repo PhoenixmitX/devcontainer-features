@@ -1,6 +1,6 @@
 {
 	"id": "personal-setup",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"name": "Personal setup",
 	"description": "Shell aliases, a shared ~/.claude volume, Claude Code with auto-update and a Remote Control session in GNU screen, plus a standard set of VS Code extensions. Debian/Ubuntu images only.",
 	"documentationURL": "https://github.com/PhoenixmitX/devcontainer-features/tree/main/src/personal-setup",

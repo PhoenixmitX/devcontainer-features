@@ -1,27 +1,27 @@
 #!/usr/bin/env bash
 # postStartCommand: runs on every container start, in the workspace folder.
-# Updates Claude Code and starts `claude remote-control` as UID 1000 inside a
-# detached GNU screen session named 'claude' (attach with `screen -r claude`).
+# Updates Claude Code and starts `claude remote-control` as the feature's user (UID 1000 at
+# build time) inside a detached GNU screen session named 'claude' (`screen -r claude`).
 set -uo pipefail
 
 . /usr/local/share/personal-setup/config
 
-USERNAME="$(getent passwd 1000 | cut -d: -f1)"
-USER_HOME="$(getent passwd 1000 | cut -d: -f6)"
+USER_UID="$(id -u "$USERNAME")"
+USER_HOME="$(getent passwd "$USERNAME" | cut -d: -f6)"
 WORKDIR="$PWD"
 
 as_root() { if [ "$(id -u)" = 0 ]; then "$@"; else sudo -n "$@"; fi; }
 as_user() {
-	if [ "$(id -u)" = 1000 ]; then
+	if [ "$(id -u)" = "$USER_UID" ]; then
 		"$@"
 	else
 		as_root runuser -u "$USERNAME" -- env HOME="$USER_HOME" PATH="$PATH" "$@"
 	fi
 }
 
-# A volume created by something other than this feature may be root-owned.
-if [ "$(stat -c %u "$USER_HOME/.claude" 2>/dev/null)" != 1000 ]; then
-	as_root chown 1000:1000 "$USER_HOME/.claude" || echo "personal-setup: could not chown $USER_HOME/.claude" >&2
+# The volume may be root-owned (created elsewhere) or carry a UID from before a remap.
+if [ "$(stat -c %u "$USER_HOME/.claude" 2>/dev/null)" != "$USER_UID" ]; then
+	as_root chown -R "$USERNAME:" "$USER_HOME/.claude" || echo "personal-setup: could not chown $USER_HOME/.claude" >&2
 fi
 
 export CLAUDE_CONFIG_DIR="$USER_HOME/.claude"

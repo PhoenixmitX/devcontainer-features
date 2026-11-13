@@ -11,6 +11,8 @@ if ! command -v apt-get >/dev/null; then
 fi
 
 # The feature is built around UID 1000 (the 'vscode' user of the devcontainers base images).
+# The user is stored by name: on Linux hosts the dev container tooling may later remap its
+# UID to the host user's.
 USERNAME="$(getent passwd 1000 | cut -d: -f1 || true)"
 if [ -z "$USERNAME" ]; then
 	USERNAME=vscode
@@ -41,6 +43,7 @@ mkdir -p "$SHARE_DIR"
 install -m 0644 "$FEATURE_DIR/aliases.sh" "$SHARE_DIR/aliases.sh"
 install -m 0755 "$FEATURE_DIR/post-start.sh" "$SHARE_DIR/post-start.sh"
 cat > "$SHARE_DIR/config" <<CONF
+USERNAME=$USERNAME
 REMOTE_CONTROL=${REMOTECONTROL:-true}
 AUTO_UPDATE=${AUTOUPDATE:-true}
 PERMISSION_MODE=${PERMISSIONMODE:-}

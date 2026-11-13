@@ -8,7 +8,7 @@ check "aliases hooked into bash" grep -q personal-setup /etc/bash.bashrc
 check "dc alias" bash -ic "alias dc" 
 check "ll alias" bash -ic "alias ll"
 check "la alias" bash -ic "alias la"
-check "~/.claude owned by uid 1000" bash -c "[ \"\$(stat -c %u /home/vscode/.claude)\" = 1000 ]"
+check "~/.claude owned by vscode" bash -c "[ \"\$(stat -c %U /home/vscode/.claude)\" = vscode ]"
 check "post-start script" test -x /usr/local/share/personal-setup/post-start.sh
 
 reportResults
